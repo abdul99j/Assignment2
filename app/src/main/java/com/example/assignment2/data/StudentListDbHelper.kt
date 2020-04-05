@@ -4,7 +4,15 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class StudentListDbHelper(private val context: Context?) : SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VERSION) {
+private const val SQL_CREATE_ENTRIES =
+    "CREATE TABLE ${StudentListContract.StudentListEntry.TABLE_NAME} (" +
+            "${StudentListContract.StudentListEntry.COLUMN_NAME_ROLL_NO} TEXT PRIMARY KEY," +
+            "${StudentListContract.StudentListEntry.COLUMN_NAME_STUDENT_NAME} TEXT)"
+
+private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${StudentListContract.StudentListEntry.TABLE_NAME}"
+
+
+class StudentListDbHelper(private val context: Context) : SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VERSION) {
 
     companion object{
         const val DATABASE_NAME:String="studentlist.db"
@@ -14,17 +22,12 @@ class StudentListDbHelper(private val context: Context?) : SQLiteOpenHelper(cont
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val SQL_CREATE_STUDENT_LIST_TABLE="CREATE TABLE"+
-                StudentListContract.StudentListEntry.TABLE_NAME + "(" +
-                StudentListContract.StudentListEntry.COLUMN_NAME_ROLL_NO + "TEXT PRIMARY KEY,"
-                StudentListContract.StudentListEntry.COLUMN_NAME_STUDENT_NAME +"TEXT NOT NULL"+ ");"
-        if (db != null) {
-            db.execSQL(SQL_CREATE_STUDENT_LIST_TABLE)
-        }
+        db?.execSQL(SQL_CREATE_ENTRIES)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.execSQL("DROP TABLE IF EXISTS"+StudentListContract.StudentListEntry.TABLE_NAME)
+        db?.execSQL(SQL_DELETE_ENTRIES)
         onCreate(db)
     }
 

@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
+    <uses-permission android:name="com.example.udacity.droidtermsexample.TERMS_READ" />
 
 </manifest>
