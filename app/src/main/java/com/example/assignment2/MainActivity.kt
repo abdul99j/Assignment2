@@ -12,6 +12,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.loader.app.LoaderManager
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private  val TAG="Myactivity"
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private lateinit var viewManager: RecyclerView.LayoutManager
+     private lateinit var viewManager: RecyclerView.LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity() {
             Log.w(TAG,"IN ADAPTER")
             adapter=viewAdapter
         }
+
+
 
     }
 
@@ -70,5 +76,12 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+    interface OnItemClickListener {
+        fun onItemClicked(position: Int, view: View)
+    }
+
+
+
 
 }

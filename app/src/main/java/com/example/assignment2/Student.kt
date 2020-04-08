@@ -5,5 +5,5 @@ import java.io.Serializable
 class Student (_name:String,_rollNo:String,_checked:Int):Serializable{
     val name: String = _name
     val rollNo: String = _rollNo
-    val isChecked:Int = _checked
+    var isChecked:Int = _checked
 }

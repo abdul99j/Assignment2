@@ -38,7 +38,7 @@ class AttendanceDbHelper(context: Context?): SQLiteOpenHelper(context,DATABASE_N
 
     companion object{
         const val DATABASE_NAME="Attendance.db"
-        const val DATABASE_VERSION=2
+        const val DATABASE_VERSION=1
     }
 
 }

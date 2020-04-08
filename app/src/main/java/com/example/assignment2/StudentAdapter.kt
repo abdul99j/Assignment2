@@ -2,6 +2,7 @@ package com.example.assignment2
 
 import android.content.Context
 import android.database.Cursor
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,9 +43,24 @@ class StudentAdapter(_context:Context,_students:ArrayList<Student>) : RecyclerVi
             0->holder.check.isChecked=false
             1->holder.check.isChecked=true
         }
- }
+        holder.check.setOnClickListener {
+            Log.v("CLICKED","SAVE HOGYA")
+            val position = holder.adapterPosition
+            val newValue = !holder.check.isChecked
+            if(newValue){
+                student[position].isChecked=0
+                Log.e("Roll_NO",student[position].rollNo)
+                Log.e("CHECKED",student[position].isChecked.toString())
 
+            } else{
+                student[position].isChecked=1
+                Log.e("Roll_NO",student[position].rollNo)
+                Log.e("CHECKED",student[position].isChecked.toString())
 
+            }
 
+            //display the text accordingly with the newValue value
+        }
+    }
 
 }

@@ -12,6 +12,7 @@ class AttendanceContentProvider:ContentProvider() {
     private lateinit var mAttendanceDbHelper:AttendanceDbHelper
     private var ATTENDANCE:Int=100
     private var ATTENDANCE_BY_COURSE=101
+    private var ATTENDANCE_BY_DATE=102
     var DELETE_ATTENDANCE_BY_COURSE=103
 
     private var sUriMatcher:UriMatcher=buildUriMatcher()
@@ -46,7 +47,7 @@ class AttendanceContentProvider:ContentProvider() {
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE,ATTENDANCE)
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#", ATTENDANCE_BY_COURSE
             )
-
+            addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#/date/#",ATTENDANCE_BY_DATE)
         }
     }
 
@@ -67,8 +68,13 @@ class AttendanceContentProvider:ContentProvider() {
                     null,null,sortOrder,null)
                 return retCursor
             }
+            ATTENDANCE_BY_DATE->{
+            }
             else -> throw UnsupportedOperationException("Unknown uri: $uri")
         }
+        retCursor=db.query(false,AttendanceContract.AttendanceEntry.TABLE_NAME,null,
+            "${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE}=? " +
+                    "AND ${AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE}=?",selectionArgs,null,null,null,null)
         retCursor.setNotificationUri(context?.contentResolver,uri)
         throw java.lang.UnsupportedOperationException("Not Yet Implemented")
 
@@ -89,7 +95,24 @@ class AttendanceContentProvider:ContentProvider() {
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var db:SQLiteDatabase=mAttendanceDbHelper.writableDatabase
+        var match:Int=sUriMatcher.match(uri)
+        var retId:Int
+        when(match)
+        {
+            ATTENDANCE_BY_COURSE->{
+                retId=db.delete(AttendanceContract.AttendanceEntry.TABLE_NAME,"${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE}=? " +
+                        "AND ${AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE}=?",selectionArgs)
+                if(retId>0)
+                {
+                    return retId
+                }
+                else{
+                    return -1
+                }
+            }
+        }
+        return throw UnsupportedOperationException("UNKWON OPERATION $uri")
     }
 
     override fun getType(uri: Uri): String? {
