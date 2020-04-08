@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.assignment2.data.StudentListContract
 
-class StudentAdapter(_context:Context,_cursor:Cursor) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
-    var cursor:Cursor=_cursor
+class StudentAdapter(_context:Context,_students:ArrayList<Student>) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
+    var student=_students
     var context:Context = _context
 
 
@@ -29,21 +30,21 @@ class StudentAdapter(_context:Context,_cursor:Cursor) : RecyclerView.Adapter<Stu
     }
 
     override fun getItemCount(): Int {
-        return cursor.count
+        return student.size
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
-        if(!cursor.moveToPosition(position))
-            return
-        var name = cursor.getString(cursor.getColumnIndex
-            (StudentListContract.StudentListEntry.COLUMN_NAME_STUDENT_NAME))
-        var rollNo=cursor.getString(cursor.getColumnIndex
-            (StudentListContract.StudentListEntry.COLUMN_NAME_ROLL_NO))
+        holder.name.text=student[position].name
+        holder.rollNo.text=student[position].rollNo
 
-        holder.name.text = name
-        holder.rollNo.text = rollNo
+        when(student[position].isChecked)
+        {
+            0->holder.check.isChecked=false
+            1->holder.check.isChecked=true
+        }
+ }
 
-    }
+
 
 
 }
