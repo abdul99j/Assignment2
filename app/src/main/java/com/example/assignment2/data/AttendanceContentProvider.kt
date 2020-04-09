@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import android.util.Log
 
 
 class AttendanceContentProvider:ContentProvider() {
@@ -12,8 +13,8 @@ class AttendanceContentProvider:ContentProvider() {
     private lateinit var mAttendanceDbHelper:AttendanceDbHelper
     private var ATTENDANCE:Int=100
     private var ATTENDANCE_BY_COURSE=101
-    private var ATTENDANCE_BY_DATE=102
-    var DELETE_ATTENDANCE_BY_COURSE=103
+    private var ATTENDANCE_BY_DATE_COURSE=102
+
 
     private var sUriMatcher:UriMatcher=buildUriMatcher()
 
@@ -47,7 +48,7 @@ class AttendanceContentProvider:ContentProvider() {
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE,ATTENDANCE)
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#", ATTENDANCE_BY_COURSE
             )
-            addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#/date/#",ATTENDANCE_BY_DATE)
+            addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#/#",ATTENDANCE_BY_DATE_COURSE)
         }
     }
 
@@ -68,7 +69,9 @@ class AttendanceContentProvider:ContentProvider() {
                     null,null,sortOrder,null)
                 return retCursor
             }
-            ATTENDANCE_BY_DATE->{
+            ATTENDANCE_BY_DATE_COURSE->{
+                retCursor=db.query(false,AttendanceContract.AttendanceEntry.TABLE_NAME,projection,
+                        selection,selectionArgs,null,null,null,null)
             }
             else -> throw UnsupportedOperationException("Unknown uri: $uri")
         }
@@ -98,10 +101,12 @@ class AttendanceContentProvider:ContentProvider() {
         var db:SQLiteDatabase=mAttendanceDbHelper.writableDatabase
         var match:Int=sUriMatcher.match(uri)
         var retId:Int
+        Log.w("DEL/ARGs", selectionArgs?.get(0))
+        Log.w("DEL/ARGS", selectionArgs?.get(1))
         when(match)
         {
             ATTENDANCE_BY_COURSE->{
-                retId=db.delete(AttendanceContract.AttendanceEntry.TABLE_NAME,"${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE}=? " +
+                retId=db.delete(AttendanceContract.AttendanceEntry.TABLE_NAME,"${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE}=?" +
                         "AND ${AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE}=?",selectionArgs)
                 if(retId>0)
                 {

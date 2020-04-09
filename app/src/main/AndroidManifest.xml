@@ -11,18 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StudentActivity">
-        </activity>
+        <activity android:name=".DeleteActivity"></activity>
+        <activity android:name=".data.delete" />
+        <activity android:name=".StudentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
+            android:name=".data.AttendanceContentProvider"
             android:authorities="com.example.assignment2"
-            android:name="com.example.assignment2.data.AttendanceContentProvider"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -36,8 +36,6 @@ class CourseAdapter(_context: Context,_cursor:Cursor):RecyclerView.Adapter<Cours
         var courseId=cursor.getColumnIndex(AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE)
         var dateId=cursor.getColumnIndex(AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE)
 
-
-
         cursor.moveToPosition(position)
         Log.w("BIND","SAHI JA RHA")
 
@@ -45,12 +43,12 @@ class CourseAdapter(_context: Context,_cursor:Cursor):RecyclerView.Adapter<Cours
         var course=cursor.getString(courseId)
         var date=cursor.getString(dateId)
 
-        holder.itemView.setOnClickListener(){
-            var intent=Intent(context,StudentActivity::class.java)
+        holder.itemView.setOnClickListener{
+            Log.w("CLICKED","ITEM")
+            var intent:Intent=Intent(holder.itemView.context,StudentActivity::class.java)
             intent.putExtra("course",course)
             intent.putExtra("date",date)
-
-
+            holder.itemView.context.startActivity(intent)
         }
 
         holder.courseName.text=course

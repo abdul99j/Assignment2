@@ -13,7 +13,7 @@ private const val SQL_CREATE_ENTRIES =
             "${AttendanceContract.AttendanceEntry.COLUMN_NAME_CHECKED} INTEGER NOT NULL," +
             "PRIMARY KEY (${AttendanceContract.AttendanceEntry.COLUMN_NAME_ROLL_NO}," +
             "${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE}," +
-            "${AttendanceContract.AttendanceEntry.COLUMN_NAME_DATE})"+")"
+            "${AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE})"+")"
 
 
 private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${AttendanceContract.AttendanceEntry.TABLE_NAME}"
@@ -38,7 +38,7 @@ class AttendanceDbHelper(context: Context?): SQLiteOpenHelper(context,DATABASE_N
 
     companion object{
         const val DATABASE_NAME="Attendance.db"
-        const val DATABASE_VERSION=1
+        const val DATABASE_VERSION=2
     }
 
 }
