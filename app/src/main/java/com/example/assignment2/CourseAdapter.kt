@@ -54,4 +54,5 @@ class CourseAdapter(_context: Context,_cursor:Cursor):RecyclerView.Adapter<Cours
         holder.courseName.text=course
         holder.dated.text=date
     }
+
 }

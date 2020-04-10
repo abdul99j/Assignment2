@@ -1,24 +1,15 @@
 package com.example.assignment2
 
 import android.content.ContentValues
-import android.content.Intent
-import android.database.Cursor
-import android.database.SQLException
-import android.database.sqlite.SQLiteDatabase
-import android.net.ParseException
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment2.data.AttendanceContract
-import com.example.assignment2.data.AttendanceDbHelper
-import java.text.SimpleDateFormat
 
 
 class StudentActivity : AppCompatActivity() {
@@ -36,13 +27,19 @@ class StudentActivity : AppCompatActivity() {
         var courseName:EditText=findViewById(R.id.course_name)
 
 
+
         studentsList.add(Student("Abdul Samad","17L-4237",0))
         studentsList.add(Student("Waleed Iqbal","17L-4038",0))
         studentsList.add(Student("Shehzar","17L-4177",0))
         studentsList.add(Student("Osama Asif","17L-4192",0))
+        var selectAllCheck:CheckBox=findViewById(R.id.select_All_check)
+
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = StudentAdapter(this,studentsList)
+        viewAdapter = StudentAdapter(this,studentsList,studentsList)
+        selectAllCheck.setOnClickListener{
+            (viewAdapter as StudentAdapter).selectAll(selectAllCheck)
+        }
 
         recyclerView=findViewById<RecyclerView>(R.id.student_list).apply {
             layoutManager=viewManager
@@ -52,6 +49,7 @@ class StudentActivity : AppCompatActivity() {
         {
             Log.w("CHECKED",students.isChecked.toString())
         }
+
         var button=findViewById<Button>(R.id.button_save)
         button.setOnClickListener{
             for(student in studentsList) {
@@ -69,18 +67,34 @@ class StudentActivity : AppCompatActivity() {
                 Toast.makeText(this,"ADDED ATTENDANCE RECORD",Toast.LENGTH_LONG).show()
             }
         }
+        var searchView:SearchView=findViewById(R.id.mSearch)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // task HERE
+                var searchQuery=query;
+                (viewAdapter as StudentAdapter).getFilter().filter(query);
+                return false;
+            }
+
+        })
+
+
 
     }
 
-    private fun checkDateFormat(date: String?): Boolean? {
-        if (date == null || !date.matches(Regex("^(1[0-9]|0[1-9]|3[0-1]|2[1-9])/(0[1-9]|1[0-2])/[0-9]{4}$"))) return false
-        val format = SimpleDateFormat("dd/MM/yyyy")
-        return try {
-            format.parse(date)
-            true
-        } catch (e: ParseException) {
-            false
-        }
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("students",studentsList)
+        super.onSaveInstanceState(outState)
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        savedInstanceState.getSerializable("students")
+        super.onRestoreInstanceState(savedInstanceState)
+    }
 }

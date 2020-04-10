@@ -31,11 +31,33 @@
         app:layout_constraintTop_toBottomOf="@+id/course_name"
         tools:layout_editor_absoluteX="193dp" />
 
+    <TextView
+        android:id="@+id/select_All"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="SELECT ALL"
+        app:layout_constraintTop_toBottomOf="@+id/mSearch"
+        tools:layout_editor_absoluteX="-16dp" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/select_All_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginEnd="379dp"
+        app:layout_constraintEnd_toEndOf="@+id/select_All"
+        app:layout_constraintHorizontal_bias="0.116"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mSearch" />
+
     <androidx.recyclerview.widget.RecyclerView
+
         android:id="@+id/student_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/mSearch" />
+        android:layout_height="254dp"
+        android:layout_marginTop="44dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/select_All" />
 
     <Button
         android:id="@+id/button_save"

@@ -1,7 +1,6 @@
 package com.example.assignment2
 
 import android.content.Context
-import android.database.Cursor
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +11,15 @@ import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class StudentAdapter(_context:Context,_students:ArrayList<Student>) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>() {
+class StudentAdapter(
+    _context: Context,
+    _students: ArrayList<Student>,
+    val fileterStudentList: java.util.ArrayList<Student>
+) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>()
+,Filterable{
     var student=_students
     var context:Context = _context
+
 
 
     class StudentViewHolder(view: View):RecyclerView.ViewHolder(view){
@@ -62,5 +67,30 @@ class StudentAdapter(_context:Context,_students:ArrayList<Student>) : RecyclerVi
             //display the text accordingly with the newValue value
         }
     }
+    fun selectAll(checkBox: CheckBox) {
+        if(checkBox.isChecked){
+            for (s in student)
+            {
+                s.isChecked=1
+            }
+            notifyDataSetChanged()
+        }
+        else{
+            for (s in student)
+            {
+                s.isChecked=0
+            }
+            notifyDataSetChanged()
+        }
+    }
+
+    override fun getFilter(): Filter {
+        if(filter==null)
+        {
+            val filter= CustomFilter(fileterStudentList, this)
+        }
+        return filter;
+    }
+
 
 }

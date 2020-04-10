@@ -19,13 +19,16 @@ class UpdateActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
+    lateinit var cursor:Cursor
+    var course:String=""
+    var date:String=""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update)
 
-        var course:String=""
-        var date:String=""
+
 
         var courseName:EditText=findViewById(R.id.course_name_update)
         var dated:EditText=findViewById(R.id.date_update)
@@ -56,7 +59,7 @@ class UpdateActivity : AppCompatActivity() {
                         "${AttendanceContract.AttendanceEntry.COLUMN_NAME_COURSE}=?"
             var args = arrayOf(date, course)
             Log.w("TAG", uri.toString())
-            var cursor:Cursor = contentResolver.query(final_uri, columns, selection, args, null)!!
+            cursor = contentResolver.query(final_uri, columns, selection, args, null)!!
             var studentList=ArrayList<Student>()
             viewManager = LinearLayoutManager(this)
             viewAdapter = UpdateAdapter(this, cursor!!,studentList)
@@ -89,6 +92,18 @@ class UpdateActivity : AppCompatActivity() {
 
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("date",date)
+        outState.putString("course",course)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        date= savedInstanceState.getString("date").toString()
+        course= savedInstanceState.getString("course").toString()
+        super.onRestoreInstanceState(savedInstanceState)
     }
 }
 
