@@ -6,6 +6,7 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 
 
 class AttendanceContentProvider:ContentProvider() {
@@ -48,7 +49,7 @@ class AttendanceContentProvider:ContentProvider() {
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE,ATTENDANCE)
             addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#", ATTENDANCE_BY_COURSE
             )
-            addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/#/#",ATTENDANCE_BY_DATE_COURSE)
+            addURI(AttendanceContract.AUTHORITY,AttendanceContract.PATH_ATTENDANCE+"/date/#",ATTENDANCE_BY_DATE_COURSE)
         }
     }
 
@@ -72,6 +73,7 @@ class AttendanceContentProvider:ContentProvider() {
             ATTENDANCE_BY_DATE_COURSE->{
                 retCursor=db.query(false,AttendanceContract.AttendanceEntry.TABLE_NAME,projection,
                         selection,selectionArgs,null,null,null,null)
+                return retCursor
             }
             else -> throw UnsupportedOperationException("Unknown uri: $uri")
         }
@@ -94,7 +96,22 @@ class AttendanceContentProvider:ContentProvider() {
         selection: String?,
         selectionArgs: Array<out String>?
     ): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var db:SQLiteDatabase=mAttendanceDbHelper.writableDatabase
+        var match:Int=sUriMatcher.match(uri)
+        var status:Int
+        when(match){
+            ATTENDANCE->{
+                Log.w("IN ATTENDANCE","UPDATING")
+                status=db.update(AttendanceContract.AttendanceEntry.TABLE_NAME
+                ,values,selection,selectionArgs)
+                return if(status>0) {
+                    1
+                } else {
+                    0
+                }
+            }
+        }
+        return -1
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {

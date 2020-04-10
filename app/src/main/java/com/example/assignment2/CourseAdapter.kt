@@ -45,7 +45,7 @@ class CourseAdapter(_context: Context,_cursor:Cursor):RecyclerView.Adapter<Cours
 
         holder.itemView.setOnClickListener{
             Log.w("CLICKED","ITEM")
-            var intent:Intent=Intent(holder.itemView.context,StudentActivity::class.java)
+            var intent:Intent=Intent(holder.itemView.context,UpdateActivity::class.java)
             intent.putExtra("course",course)
             intent.putExtra("date",date)
             holder.itemView.context.startActivity(intent)
