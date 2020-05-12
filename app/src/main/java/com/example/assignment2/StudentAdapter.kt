@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 class StudentAdapter(
     _context: Context,
     _students: ArrayList<Student>,
-    val fileterStudentList: java.util.ArrayList<Student>
-) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>()
+    val filterStudentList: java.util.ArrayList<Student>,
+    val checkBox: CheckBox
+    ) : RecyclerView.Adapter<StudentAdapter.StudentViewHolder>()
 ,Filterable{
     var student=_students
     var context:Context = _context
+
 
 
 
@@ -38,20 +40,44 @@ class StudentAdapter(
     override fun getItemCount(): Int {
         return student.size
     }
+    fun checkAllchecked():Boolean
+    {
+        var count:Int=0
+        for (s in student)
+        {
+            if(s.isChecked==1)
+            {
+                count++
+            }
+        }
+        if(count==student.size)
+        {
+            return true
+        }
+        return false
+
+    }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         holder.name.text=student[position].name
         holder.rollNo.text=student[position].rollNo
 
+
         when(student[position].isChecked)
         {
             0->holder.check.isChecked=false
             1->holder.check.isChecked=true
+
         }
         holder.check.setOnClickListener {
             Log.v("CLICKED","SAVE HOGYA")
             val position = holder.adapterPosition
             val newValue = !holder.check.isChecked
+            checkBox.isChecked=false
+            if(checkAllchecked())
+            {
+                checkBox.isChecked=true
+            }
             if(newValue){
                 student[position].isChecked=0
                 Log.e("Roll_NO",student[position].rollNo)
@@ -87,7 +113,7 @@ class StudentAdapter(
     override fun getFilter(): Filter {
         if(filter==null)
         {
-            val filter= CustomFilter(fileterStudentList, this)
+            val filter= CustomFilter(filterStudentList, this)
         }
         return filter;
     }

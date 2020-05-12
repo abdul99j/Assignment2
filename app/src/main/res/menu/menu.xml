@@ -6,5 +6,9 @@
     <item
         android:id="@+id/delete_record"
         android:title="Delte Existing"/>
+    <item
+        android:id="@+id/use_network"
+        android:title="Switch to Online"/>
+
 
 </menu>

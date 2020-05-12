@@ -4,65 +4,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StudentActivity">
+    tools:context=".NetworkActivity">
 
     <EditText
-        android:id="@+id/date"
+        android:id="@+id/network_course_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Date in Following Format dd/mm/yy"
+        android:hint="Enter course code CS-301"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp" />
 
     <EditText
         android:hint="Enter Course Name CS-301"
-        android:id="@+id/course_name"
+        android:id="@+id/network_course_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/date"
+        app:layout_constraintTop_toBottomOf="@+id/network_course_code"
         tools:layout_editor_absoluteX="16dp" />
 
-
-
+    <EditText
+        android:id="@+id/network_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/network_course_name"
+        tools:layout_editor_absoluteX="16dp" />
     <SearchView
-        android:id="@+id/mSearch"
+        android:hint="Enter Date DD/MM/YY"
+        android:id="@+id/network_mSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:queryHint="Enter Student Name"
-        app:layout_constraintTop_toBottomOf="@+id/course_name"
+        app:layout_constraintTop_toBottomOf="@+id/network_date"
         tools:layout_editor_absoluteX="193dp" />
 
     <TextView
-        android:id="@+id/select_All"
+        android:id="@+id/network_select_All"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:text="SELECT ALL"
-        app:layout_constraintTop_toBottomOf="@+id/mSearch"
+        app:layout_constraintTop_toBottomOf="@+id/network_mSearch"
         tools:layout_editor_absoluteX="-16dp" />
 
     <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/select_All_check"
+        android:id="@+id/network_select_All_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:layout_marginEnd="379dp"
-        app:layout_constraintEnd_toEndOf="@+id/select_All"
+        app:layout_constraintEnd_toEndOf="@+id/network_select_All"
         app:layout_constraintHorizontal_bias="0.116"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mSearch" />
+        app:layout_constraintTop_toBottomOf="@+id/network_mSearch" />
 
     <androidx.recyclerview.widget.RecyclerView
 
-        android:id="@+id/student_list"
+        android:id="@+id/network_student_list"
         android:layout_width="match_parent"
-        android:layout_height="254dp"
+        android:layout_height="450dp"
         android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/select_All" />
+        app:layout_constraintTop_toBottomOf="@+id/network_select_All" />
 
     <Button
-        android:id="@+id/button_save"
+        android:id="@+id/network_button_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"

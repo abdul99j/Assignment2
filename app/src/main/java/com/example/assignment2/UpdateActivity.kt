@@ -30,6 +30,7 @@ class UpdateActivity : AppCompatActivity() {
 
 
 
+
         var courseName:EditText=findViewById(R.id.course_name_update)
         var dated:EditText=findViewById(R.id.date_update)
 

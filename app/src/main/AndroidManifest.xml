@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.assignment2">
 
-    <uses-permission android:name="com.example.udacity.droidtermsexample.TERMS_READ" />
+
+    <uses-permission android:name="android.permission.INTERNET"/>\
+    <uses-permission android:name="android.permissions.READ_DATABASE"/>
+    <uses-permission android:name="android.permissioms.WRITE_DATABASE"/>
 
     <application
         android:allowBackup="true"
@@ -11,9 +14,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UpdateActivity"></activity>
+        <service
+            android:name=".ExportAttendance"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name=".ImportAttendance"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".NetworkActivity" />
+        <activity android:name=".UpdateActivity" />
         <activity android:name=".DeleteActivity" />
-        <activity android:name=".data.delete" />
         <activity android:name=".StudentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -26,7 +38,7 @@
         <provider
             android:name=".data.AttendanceContentProvider"
             android:authorities="com.example.assignment2"
-            android:exported="false" />
+            android:exported="true" />
     </application>
 
 </manifest>

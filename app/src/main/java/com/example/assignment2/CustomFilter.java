@@ -59,8 +59,6 @@ public class CustomFilter extends Filter{
 
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-
-
         adapter.setStudent((ArrayList<Student>) results.values);
 
         //REFRESH

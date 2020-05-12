@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var id=item.itemId
         when(id){
@@ -53,11 +54,19 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     return true
             }
+
             R.id.delete_record->{
                 intent=Intent(this, DeleteActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
+            R.id.use_network->{
+                intent=Intent(this,NetworkActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+
         }
         return true
     }

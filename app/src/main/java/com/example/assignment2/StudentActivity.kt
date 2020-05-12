@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +24,10 @@ class StudentActivity : AppCompatActivity() {
 
         var date:EditText=findViewById(R.id.date)
         var courseName:EditText=findViewById(R.id.course_name)
+        if(savedInstanceState!=null)
+        {
+            studentsList= savedInstanceState.getSerializable("students") as ArrayList<Student>
+        }
 
 
 
@@ -35,8 +38,9 @@ class StudentActivity : AppCompatActivity() {
         var selectAllCheck:CheckBox=findViewById(R.id.select_All_check)
 
 
+
         viewManager = LinearLayoutManager(this)
-        viewAdapter = StudentAdapter(this,studentsList,studentsList)
+        viewAdapter = StudentAdapter(this,studentsList,studentsList,selectAllCheck)
         selectAllCheck.setOnClickListener{
             (viewAdapter as StudentAdapter).selectAll(selectAllCheck)
         }
@@ -78,7 +82,7 @@ class StudentActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String): Boolean {
                 // task HERE
                 var searchQuery=query;
-                (viewAdapter as StudentAdapter).getFilter().filter(query);
+                (viewAdapter as StudentAdapter).filter.filter(query)
                 return false;
             }
 
@@ -89,12 +93,14 @@ class StudentActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable("students",studentsList)
         super.onSaveInstanceState(outState)
+        outState.putSerializable("students",studentsList)
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        savedInstanceState.getSerializable("students")
         super.onRestoreInstanceState(savedInstanceState)
+        studentsList= savedInstanceState.getSerializable("students") as ArrayList<Student>
+
     }
 }
