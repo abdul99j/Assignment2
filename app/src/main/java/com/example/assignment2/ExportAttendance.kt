@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.*
+import android.util.Log
 import android.widget.Toast
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -29,39 +30,43 @@ class ExportAttendance : Service() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 1->{
+                    var exporturl=msg.obj.toString()
+                    Toast.makeText(applicationContext,exporturl,Toast.LENGTH_LONG).show()
+                    var executor=Executors.newSingleThreadExecutor()
+                    var future=executor.submit(
+                        Callable<String> {
+                            try {
+                                var url = URL(msg.obj.toString())
+                                var connection = url.openConnection() as HttpURLConnection
+                                connection.readTimeout = 10000
+                                connection.connectTimeout = 15000
+                                connection.requestMethod = "POST"
+                                connection.setRequestProperty("Content-type", "text/xml")
+                                connection.doOutput = true
+                                connection.connect()
 
-                    var executor= Executors.newSingleThreadExecutor()
-                    var future=executor.submit(Callable {
-                        fun postXML(){
-                            var url=URL("htttp://10.0.2.2/notes/upload.php")
-                            var connection=url.openConnection() as HttpURLConnection
-                            connection.readTimeout=10000
-                            connection.connectTimeout=15000
-                            connection.requestMethod="POST"
-                            connection.setRequestProperty("Content-type","text/xml")
-                            connection.doOutput=true
-                            connection.connect()
-
-                            var writer=BufferedWriter(OutputStreamWriter(connection.outputStream))
-                            var bundle=msg.data
-                            var course=bundle.getString("code")
-                            var title=bundle.getString("title")
-                            var date=bundle.getString("date")
-                            writer.write("<course code={'$course'} title={'$title'} date={'$date'}>")
-                            var studentList=bundle.getSerializable("students") as ArrayList<Student>
-                            for (student in studentList)
-                            {
-                                writer.write("<student rollno={'${student.rollNo}' name='${student.name}' attendance='${student.isChecked}'/>")
+                                var writer =
+                                    BufferedWriter(OutputStreamWriter(connection.outputStream))
+                                var bundle = msg.data
+                                var course = bundle.getString("code")
+                                var title = bundle.getString("name")
+                                var date = bundle.getString("date")
+                                var studentList=bundle.getSerializable("students") as ArrayList<Student>
+                                writer.write("<course code={'$course'} title={'$title'} date={'$date'}>")
+                                for (student in studentList){
+                                    writer.write("<student rollno={'${student.rollNo}'} name={'${student.name}'} attendance={'${student.isChecked}'}")
+                                }
+                                writer.write("</course>")
+                                writer.flush()
+                                connection.responseCode.toString()
                             }
-                            writer.write("</course>")
-
+                            catch (e:Exception)
+                            {
+                                e.toString()
+                            }
                         }
-                    })
-
-                    var replyMessenger=msg.replyTo
-                    var replyMessage=Message()
-                    replyMessage.obj=future.get()
-                    replyMessenger.send(replyMessage)
+                    )
+                    Toast.makeText(applicationContext,future.get().toString(),Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -69,34 +74,4 @@ class ExportAttendance : Service() {
 
 
 
-}
-private fun postXML(bundle: Bundle):String {
-    var line = ""
-    try {
-        var url =
-            URL("https://sites.google.com/site/farooqahmedrana/Home/students.xml?attredirects=0&d=1")
-        var connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        connection.readTimeout = 10000
-        connection.connectTimeout = 15000
-        connection.requestMethod = "GET"
-        connection.doInput = true
-        connection.connect()
-
-        var content = StringBuilder()
-        var reader = BufferedReader(InputStreamReader(connection.inputStream))
-
-
-        while (true) {
-            val line = reader.readLine() ?: break
-            content.append(line)
-        }
-
-        line=content.toString()
-        return line
-
-
-    } catch (e: Exception) {
-        line=e.toString()
-        return line
-    }
 }

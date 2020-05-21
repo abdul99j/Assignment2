@@ -31,9 +31,38 @@ class ImportAttendance() : Service() {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 1->{
+                    Toast.makeText(applicationContext,msg.obj.toString(),Toast.LENGTH_LONG).show()
                     var executor=Executors.newSingleThreadExecutor()
-                    var callable=Callable{fetchXML()}
-                    var future=executor.submit(callable)
+                    var future=executor.submit(Callable<String> {
+                        var line = ""
+                        try {
+                            var url = URL(msg.obj.toString())
+                            var connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+                            connection.readTimeout = 10000
+                            connection.connectTimeout = 15000
+                            connection.requestMethod = "GET"
+                            connection.doInput = true
+                            connection.connect()
+
+                            var content = StringBuilder()
+                            var reader = BufferedReader(InputStreamReader(connection.inputStream))
+
+
+                            while (true) {
+                                val line = reader.readLine() ?: break
+                                content.append(line)
+                            }
+
+                            line=content.toString()
+                            line
+
+
+                        } catch (e: Exception) {
+                            line=e.toString()
+                            line
+                        }
+
+                    })
                     var replyMessenger=msg.replyTo
                     var replyMessage=Message()
                     replyMessage.obj=future.get()
@@ -46,35 +75,4 @@ class ImportAttendance() : Service() {
 
 
 }
-private fun fetchXML():String {
-    var line = ""
-    try {
-        var url =
-            URL("https://sites.google.com/site/farooqahmedrana/Home/students.xml?attredirects=0&d=1")
-        var connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        connection.readTimeout = 10000
-        connection.connectTimeout = 15000
-        connection.requestMethod = "GET"
-        connection.doInput = true
-        connection.connect()
-
-        var content = StringBuilder()
-        var reader = BufferedReader(InputStreamReader(connection.inputStream))
-
-
-        while (true) {
-            val line = reader.readLine() ?: break
-            content.append(line)
-        }
-
-        line=content.toString()
-        return line
-
-
-    } catch (e: Exception) {
-        line=e.toString()
-        return line
-    }
-}
-
 

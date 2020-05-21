@@ -8,6 +8,7 @@ import android.util.Xml
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
@@ -23,7 +24,9 @@ import java.io.StringReader
 class NetworkActivity : AppCompatActivity() {
 
     private var messenger: Messenger? = null
+    private var exportMessenger:Messenger?=null
     private var bound: Boolean = false
+    private var exportBound:Boolean=false
     lateinit var replyMessenger: Messenger
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -122,96 +125,153 @@ class NetworkActivity : AppCompatActivity() {
         return true
     }
 
-    private val mConnection = object : ServiceConnection {
-        override fun onServiceDisconnected(name: ComponentName?) {
-            messenger = null
-            bound = false
-        }
 
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if(isMyServiceRunning(ImportAttendance::class.java)) {
-                messenger = Messenger(service)
-                var message = Message.obtain(null, 1)
-                message.replyTo = replyMessenger
-                message.obj =
-                    "https://sites.google.com/site/farooqahmedrana/Home/students.xml?attredirects=0&d=1"
-                try {
-                    messenger!!.send(message)
-                } catch (e: RemoteException) {
 
-                }
-                bound = true
-            }
-            else if(isMyServiceRunning(ExportAttendance::class.java)&& studentList.isNotEmpty())
-            {
-                messenger = Messenger(service)
-                var message = Message.obtain(null, 1)
-                message.replyTo = replyMessenger
-                message.obj =
-                    "https://sites.google.com/site/farooqahmedrana/Home/students.xml?attredirects=0&d=1"
-                var bundle=Bundle()
 
-                bundle.putSerializable("students",studentList)
-                bundle.putString("code",courseCode)
-                bundle.putString("name",courseName)
-                var date=findViewById<EditText>(R.id.network_date)
-                bundle.putString("date",date.text.toString())
 
-                message.data=bundle
-                try {
-                    messenger!!.send(message)
-                } catch (e: RemoteException) {
-
-                }
-                bound = true
-            }
-        }
+    private fun alertDialogBuilder(title: String, context: Context) {
+        val mDialog = LayoutInflater.from(applicationContext).inflate(R.layout.alert_dialog, null)
+        var alertDialog = AlertDialog.Builder(applicationContext)
+            .setTitle(title).setView(mDialog)
+        Log.w("START", "WORKING")
+        var url_alert=""
+        alertDialog.setPositiveButton("Submit", DialogInterface.OnClickListener() { dialog, p1 ->
+            url_alert = mDialog.url.text.toString()
+        })
+        alertDialog.setNegativeButton(
+            "CANCEL",
+            DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                url_alert=""
+                dialogInterface.cancel()
+            })
+        val mAlertDialog = alertDialog.show()
 
 
     }
+    fun showChangeLangDialog(title:String) {
+
+
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var id = item.itemId
         when (id) {
             R.id.import_item -> {
-                intent = Intent(this, ImportAttendance::class.java).also { intent ->
-                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+                val dialogBuilder =
+                    AlertDialog.Builder(this)
+                val inflater = this.layoutInflater
+                val dialogView: View = inflater.inflate(R.layout.alert_dialog, null)
+                dialogBuilder.setView(dialogView)
+                val edt = dialogView.findViewById(R.id.url) as EditText
+                var url:String=""
+                dialogBuilder.setTitle("IMPORT ATTENDANCE")
+                dialogBuilder.setPositiveButton(
+                    "Submit"
+                ) { dialog, whichButton ->
+                    url=edt.text.toString()
+                    val mConnection = object : ServiceConnection {
+                        override fun onServiceDisconnected(name: ComponentName?) {
+                            messenger = null
+                            bound = false
+                        }
+
+                        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                            if(isMyServiceRunning(ImportAttendance::class.java)) {
+                                messenger = Messenger(service)
+                                var message = Message.obtain(null, 1)
+                                message.replyTo = replyMessenger
+                                message.obj = url
+
+                                try {
+                                    messenger!!.send(message)
+                                } catch (e: RemoteException) {
+
+                                }
+                                bound = true
+                            }
+
+                        }
+
+
+                    }
+                    intent = Intent(this, ImportAttendance::class.java).also { intent ->
+                        bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+                    }
                 }
+                dialogBuilder.setNegativeButton(
+                    "Cancel"
+                ) { dialog, whichButton ->
+                    //pass
+                }
+                val b = dialogBuilder.create()
+                b.show()
+
+
+
             }
             R.id.export_item -> {
-                intent = Intent(this, ExportAttendance::class.java).also {
-                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+                val dialogBuilder =
+                    AlertDialog.Builder(this)
+                val inflater = this.layoutInflater
+                val dialogView: View = inflater.inflate(R.layout.alert_dialog, null)
+                dialogBuilder.setView(dialogView)
+                val edt = dialogView.findViewById(R.id.url) as EditText
+                var url:String=""
+                dialogBuilder.setTitle("EXPORT ATTENDANCE")
+                dialogBuilder.setPositiveButton(
+                    "Submit"
+                ) { dialog, whichButton ->
+                    url=edt.text.toString()
+                    val exportConnection = object : ServiceConnection {
+                        override fun onServiceDisconnected(name: ComponentName?) {
+                            exportMessenger = null
+                            exportBound = false
+                        }
+
+                        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                            if (isMyServiceRunning(ExportAttendance::class.java)) {
+                                exportMessenger = Messenger(service)
+                                var message = Message.obtain(null, 1)
+                                message.obj = url
+                                var bundle = Bundle()
+
+                                bundle.putSerializable("students", studentList)
+                                bundle.putString("code", courseCode)
+                                bundle.putString("name", courseName)
+                                var date = findViewById<EditText>(R.id.network_date)
+                                bundle.putString("date", date.text.toString())
+
+                                message.data = bundle
+                                try {
+                                    exportMessenger!!.send(message)
+                                } catch (e: RemoteException) {
+
+                                }
+                                exportBound = true
+                            }
+                        }
+
+
+                    }
+                    intent = Intent(this, ExportAttendance::class.java).also { intent ->
+                        bindService(intent, exportConnection, Context.BIND_AUTO_CREATE)
+                    }
                 }
+                dialogBuilder.setNegativeButton(
+                    "Cancel"
+                ) { dialog, whichButton ->
+                    //pass
+                }
+                val b = dialogBuilder.create()
+                b.show()
+
+
             }
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
-
-
-    fun alertDialogBuilder(title: String, context: Context) {
-        val mDialog = LayoutInflater.from(this).inflate(R.layout.alert_dialog, null)
-        var alertDialog = AlertDialog.Builder(this)
-            .setTitle(title).setView(mDialog)
-
-        Log.w("START", "WORKING")
-        var url = mDialog.url.text.toString()
-        mDialog.submit.setOnClickListener() {
-            Toast.makeText(this, url, Toast.LENGTH_LONG).show()
-        }
-        alertDialog.setPositiveButton("Submit", DialogInterface.OnClickListener() { dialog, p1 ->
-            Toast.makeText(this, url, Toast.LENGTH_LONG).show()
-
-        })
-
-        alertDialog.setNegativeButton(
-            "CANCEL",
-            DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
-                dialogInterface.cancel()
-            })
-        val mAlertDialog = alertDialog.show()
-
-    }
 
 
 }
